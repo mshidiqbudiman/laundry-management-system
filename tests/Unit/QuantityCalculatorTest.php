@@ -11,24 +11,30 @@ final class QuantityCalculatorTest extends TestCase
 {
     public function test_weight_below_one_kilogram_is_billed_as_one_kilogram(): void
     {
-        $calculator = new QuantityCalculator();
+        $calculator = new QuantityCalculator;
 
         self::assertSame(1.0, $calculator->billableKilograms(0.7));
     }
 
     public function test_weight_is_truncated_to_one_decimal_place(): void
     {
-        $calculator = new QuantityCalculator();
+        $calculator = new QuantityCalculator;
 
         self::assertSame(1.2, $calculator->billableKilograms(1.23));
         self::assertSame(1.2, $calculator->billableKilograms(1.28));
+        self::assertSame(1.9, $calculator->billableKilograms(1.99));
         self::assertSame(2.5, $calculator->billableKilograms(2.57));
+    }
+
+    public function test_exactly_one_kilogram_remains_one_kilogram(): void
+    {
+        self::assertSame(1.0, (new QuantityCalculator)->billableKilograms(1.0));
     }
 
     public function test_zero_or_negative_weight_is_rejected(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        (new QuantityCalculator())->billableKilograms(0);
+        (new QuantityCalculator)->billableKilograms(0);
     }
 }
